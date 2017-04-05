@@ -27,43 +27,43 @@ int main(int argc, char const *argv[])
 
     int byte_array_idx;
 
-    printf("Little Endian:\n");
-
-    printf("2a.  Byte Values: ");
+    printf("Part 2: Byte Ordering\n");
+    printf("========================\n");
+    printf("Byte Values of entire array (show as hexadecimal values, e.g., C7):\n");
     for (byte_array_idx = 0; byte_array_idx < 16; byte_array_idx++)
     {
         printf("%d ", bytestring[byte_array_idx]);
     }
     printf("\n");
 
-    printf("2b. Short Values: ");
+    printf("Short Int versions of the first four values of an array in hexadecimal:\n");
     for (byte_array_idx = 0; byte_array_idx < 4; byte_array_idx++)
     {
         printf("%d ", *(short_int_ptr + byte_array_idx));
     }
     printf("\n");
 
-    printf("2c.   Int Values: ");
+    printf("Int versions of the first two values of an array in hexadecimal:\n");
     for (byte_array_idx = 0; byte_array_idx < 2; byte_array_idx++)
     {
         printf("%d ", *(int_ptr + byte_array_idx));
     }
     printf("\n");
 
-    printf("2d.  Long Values: ");
+    printf("Long Int version of the first value of an array in hex: \n");
     for (byte_array_idx = 0; byte_array_idx < 1; byte_array_idx++)
     {
         printf("%ld ", *(long_int_ptr + byte_array_idx));
     }
     printf("\n");
 
-    printf("Big Endian:\n");
-
-    printf("2e.  Byte Values: %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
+    printf("2e: %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n",
         0x82, 0xCC, 0x2A, 0x01, 0xFF, 0x99, 0x80, 0x1E, 0xAA, 0x04, 0x7F, 0x77, 0x00, 0x00, 0x00, 0x0);
-    printf("2f. Short Values: %d %d %d %d\n", 0xCC82, 0x012A, 0x99FF, 0x1E80);
-    printf("2g.   Int Values: %d %d\n", (int) 0x012ACC82, (int) 0x1E8099FF);
-    printf("2h.  Long Values: %ld\n", (long) 0x1E8099FF012ACC82);
+    printf("2f: %d %d %d %d\n", 0xCC82, 0x012A, 0x99FF, 0x1E80);
+    printf("2g: %d %d\n", (int) 0x012ACC82, (int) 0x1E8099FF);
+    printf("2h: %ld\n", (long) 0x1E8099FF012ACC82);
+
+    printf("========================\n");
 
     return 0;
 }
