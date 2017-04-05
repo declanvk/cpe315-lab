@@ -25,10 +25,8 @@ ext_field : ext_field.c
 carry : carry.c
 	$(CC) $(CFLAGS) -o $@ $^
 
-demo : $(MAINS)
-	./sizes
-	./ordering
-	./unsadd
+demo : clean $(MAINS)
+	./sizes && ./ordering && ./unsadd && ./carry && ./sadd_over && ./ext_field
 
 clean : 
 	rm -f $(MAINS)
