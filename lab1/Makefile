@@ -19,3 +19,6 @@ $(MAIN): $(OBJ)
 
 clean : 
 	rm -f *.o $(MAIN)
+
+package : $(MAIN) $(DEPS)
+	zip -u lab1_source.zip Makefile *.c *.h
