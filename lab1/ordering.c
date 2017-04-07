@@ -23,9 +23,9 @@ unsigned char bytestring[] = {
 
 void lab1_part2()
 {
-        short int *short_int_ptr = (short int *) bytestring;
+    short *short_int_ptr = (short *) bytestring;
     int *int_ptr = (int *) bytestring;
-    long int *long_int_ptr = (long int *) bytestring;
+    long *long_int_ptr = (long *) bytestring;
 
     int byte_array_idx;
 
@@ -34,14 +34,14 @@ void lab1_part2()
     printf("Byte Values of entire array (show as hexadecimal values, e.g., C7):\n");
     for (byte_array_idx = 0; byte_array_idx < 16; byte_array_idx++)
     {
-        printf("%x ", bytestring[byte_array_idx]);
+        printf("%hhx ", bytestring[byte_array_idx]);
     }
     printf("\n");
 
     printf("Short Int versions of the first four values of an array in hexadecimal:\n");
     for (byte_array_idx = 0; byte_array_idx < 4; byte_array_idx++)
     {
-        printf("%x ", *(short_int_ptr + byte_array_idx));
+        printf("%hx ", *(short_int_ptr + byte_array_idx));
     }
     printf("\n");
 
@@ -63,7 +63,7 @@ void lab1_part2()
         0x82, 0xCC, 0x2A, 0x01, 0xFF, 0x99, 0x80, 0x1E, 0xAA, 0x04, 0x7F, 0x77, 0x00, 0x00, 0x00, 0x0);
     printf("2f: %x %x %x %x\n", 0xCC82, 0x012A, 0x99FF, 0x1E80);
     printf("2g: %x %x\n", (int) 0x012ACC82, (int) 0x1E8099FF);
-    printf("2h: %ld\n", (long) 0x1E8099FF012ACC82);
+    printf("2h: %lx\n", (long) 0x1E8099FF012ACC82);
 
     printf("========================\n");
 }
