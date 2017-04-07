@@ -2,6 +2,9 @@
 
 #include <stdio.h>
 
+/*prints the answers to part 4 of the lab.
+ * Uses a function that detects if a carry bit
+ * would result from an adddition of two bytes of data*/
 void lab1_part4()
 {
    int carry;
@@ -18,6 +21,12 @@ void lab1_part4()
    printf("========================\n");
 }
 
+/*takes in two unsigned ints and returns if a carry bits was made
+ *
+ * @param two unsigned chars(or equivalent) order does not matter
+ *
+ * @return 1 or 0 representing a carry bit
+*/
 int detectCarry(unsigned char a, unsigned char b)
 {
    if(b > ((unsigned char)(a+b)))
