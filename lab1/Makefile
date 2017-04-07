@@ -18,7 +18,7 @@ $(MAIN): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean : 
-	rm -f *.o $(MAIN)
+	rm -f *.o $(MAIN) *.zip
 
 package : $(MAIN) $(DEPS)
 	zip -u lab1_source.zip Makefile *.c *.h
