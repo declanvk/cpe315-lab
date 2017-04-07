@@ -4,6 +4,10 @@
 #include <string.h>
 #include <limits.h>
 
+/*
+    This part is about implementing an arbitrary width adder and testing
+    it with prepared inputs. 
+*/
 void lab1_part6()
 {
     unsigned char test1a[] = {
@@ -34,6 +38,11 @@ void lab1_part6()
     printf("========================\n");
 }
 
+/*
+    Outputs to stdout the addition of the two passed operands in the specified format
+    and output the carry bit after the completion of the additions. Also clears the 
+    result array to zero before additions are performed.
+*/
 void output_add(
     unsigned char *result,
     unsigned char *a1,
@@ -70,6 +79,11 @@ void output_add(
     printf("Carry Out = %d\n", carry);
 }
 
+/*
+    For each byte in the operands add them together and set the carry 
+    equal to the amount the operation overflowed. Return the last
+    carry out of the function.
+*/
 unsigned int arbitrary_byte_add(
     unsigned char *result,
     unsigned char *a1,
@@ -88,6 +102,11 @@ unsigned int arbitrary_byte_add(
     return carry;
 }
 
+/*
+    Detects if a carry occured by seeing if the addition result is
+    less than the unrestricted addition. If that is the case, subtracts
+    the maximum value for the constrained type from the unconstrained result.
+*/
 int detect_carry(unsigned char a, unsigned char b, unsigned char c)
 {
     unsigned char result = a + b + c;

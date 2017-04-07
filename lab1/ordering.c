@@ -2,6 +2,11 @@
 
 #include <stdio.h>
 
+/*
+    This array contains the bytes speficied in the lab instructions,
+    and is annotated with the binary representations and the corresponding
+    big endian output for each byte.
+*/
 unsigned char bytestring[] = {
     0x41, // 0100 0001 - 0x82
     0x33, // 0011 0011 - 0xCC
@@ -21,6 +26,13 @@ unsigned char bytestring[] = {
     0x00  // 0000 0000 - 0x00
 };
 
+/*
+    Outputs the array of bytes in the format of different sizes, then 
+    prints the corresponding big endian results.
+
+    Iterating through the byte array with larger types involves pointer 
+    arithmetic and the compiler automatically computing offsets for each type.
+*/
 void lab1_part2()
 {
     short *short_int_ptr = (short *) bytestring;

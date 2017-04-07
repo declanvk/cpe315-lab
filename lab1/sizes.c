@@ -2,6 +2,10 @@
 
 #include <stdio.h>
 
+/*
+    Uses builtin function to return the byte sizes of each data type.
+    Prints sizes to stdout
+*/
 void lab1_part1()
 {
     printf("Part 1: Data Types and their Sizes\n");
