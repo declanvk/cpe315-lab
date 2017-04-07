@@ -1,6 +1,8 @@
+#include "sizes.h"
+
 #include <stdio.h>
 
-int main(int argc, char const *argv[])
+void lab1_part1()
 {
     printf("Part 1: Data Types and their Sizes\n");
     printf("========================\n");
@@ -9,6 +11,4 @@ int main(int argc, char const *argv[])
     printf("Integer Size: %lu\n", sizeof(int));
     printf("Long Integer Size: %lu\n", sizeof(long));
     printf("========================\n");
-
-    return 0;
 }

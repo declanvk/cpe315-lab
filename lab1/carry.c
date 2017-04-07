@@ -1,15 +1,8 @@
+#include "carry.h"
+
 #include <stdio.h>
 
-int detectCarry(unsigned char a, unsigned char b)
-{
-   if(b > ((unsigned char)(a+b)))
-   {
-      return 1;
-   }
-   return 0;
-}
-
-int main()
+void lab1_part4()
 {
    int carry;
    printf("Part 4: Detecting a Carry condition\n");
@@ -25,3 +18,11 @@ int main()
    printf("========================\n");
 }
 
+int detectCarry(unsigned char a, unsigned char b)
+{
+   if(b > ((unsigned char)(a+b)))
+   {
+      return 1;
+   }
+   return 0;
+}

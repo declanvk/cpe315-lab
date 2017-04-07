@@ -1,6 +1,8 @@
+#include "unsadd.h"
+
 #include <stdio.h>
 
-int main(int argc, char const *argv[])
+void lab1_part3()
 {
     printf("Part 3: Unsigned Addition of Small Fields\n");
     printf("========================\n");
@@ -9,5 +11,4 @@ int main(int argc, char const *argv[])
     printf("0x80 + 0xFF = 0x%x\n", (unsigned char) (0x80 + 0xFF));
     printf("0xFF + 0x01 = 0x%x\n", (unsigned char) (0xFF + 0x01));
     printf("========================\n");
-    return 0;
 }
