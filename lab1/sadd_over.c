@@ -33,6 +33,11 @@ int detect_overflow(signed char a, signed char b)
     {
         return 1;
     }
+
+    if (a < 0 && b < 0 && result > 0)
+    {
+        return 1;
+    }
     
     return 0;
 }
