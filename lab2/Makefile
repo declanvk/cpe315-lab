@@ -9,11 +9,11 @@ OBJ = float_add.o float_sub.o norm_float.o unpack_float.o float_mult.o lab2.o pa
 
 all : $(MAIN)
 
-%.o: %.c $(DEPS)
-	$(CC) $(CFLAGS) -c -o $@ $<
+%.o: %.c %.h common.h
+	$(CC) $(CFLAGS) -o $@ -c $<
 
-$(MAIN): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+$(MAIN): $(OBJ) $(DEPS)
+	$(CC) $(CFLAGS) -o $@ $(OBJ)
 
 clean : 
 	rm -f *.o $(MAIN) *.zip
