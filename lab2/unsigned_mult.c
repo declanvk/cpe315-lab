@@ -13,7 +13,7 @@ void question_1()
     printf("=========Part 1========== \n");
     for (mult_idx = 0; mult_idx < 5; mult_idx++)
     {
-        printf("1%c. 0x%04x * 0x%04x = 0x%08x\n", 'a' + mult_idx,
+        printf("1%c. a=0x%04x, b=0x%04x c=0x%08x\n", 'a' + mult_idx,
             multiplicands[mult_idx], multipliers[mult_idx],
             umultiply(multiplicands[mult_idx], multipliers[mult_idx]));
     }
