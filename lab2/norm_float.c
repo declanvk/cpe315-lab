@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+    Part 4 - Normalize integer representation of floating point number
+*/
 void question_4()
 {
     int arg_idx;
@@ -24,6 +27,10 @@ void question_4()
     printf("=========================\n");
 }
 
+/*
+    After checking the case that the fraction is zero, shift the fraction and
+    decrement the exponent while the highest two bits are the same.
+*/
 void normalize(INTFLOAT_PTR x)
 {
     if (x->fraction == 0)

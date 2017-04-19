@@ -51,7 +51,7 @@ float create_float(INTFLOAT_PTR extracted)
         extracted->fraction <<= 2;
         extracted->exponent--;
 
-        components.fields.frac = extracted->fraction;
+        components.fields.frac = extracted->fraction >> 9; // Adjust for bitfield
         components.fields.exp = extracted->exponent + 127;
     }
 

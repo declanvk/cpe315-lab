@@ -5,6 +5,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+
+#include "common.h"
 
 /*
     Part 2 - Unpack IEEE 754 floating point single precision number into
@@ -13,7 +16,7 @@
 void question_2()
 {
     int arg_idx;
-    int tests[] = { 0x40C80000, 0xC3000000, 0x3E000000, 0x3EAAAAAB, 0xC1080000 };
+    int tests[] = { 0x40C80000, 0xC3000000, 0x3E000000, 0x3EAAAAAB };
     INTFLOAT_PTR result = (INTFLOAT_PTR) malloc(sizeof(INTFLOAT));
     float input = 0;
 
@@ -48,7 +51,7 @@ void extract_float(INTFLOAT_PTR x, float f)
 {
     float_components components;
 
-    if (f == 0)
+    if (f == 0.0f)
     {
         x->exponent = 0;
         x->fraction = 0;
@@ -60,9 +63,9 @@ void extract_float(INTFLOAT_PTR x, float f)
 
     x->exponent = components.fields.exp - 127;
 
-    x->fraction = components.fields.frac >> 2;
+    x->fraction = (components.fields.frac << 9) >> 2;
     x->exponent += 1;
-    x->fraction = 0x40000000 | (0x3fffffff & x->fraction);
+    x->fraction = 0x40000000 | (0x7fffffff & x->fraction);
 
     if (components.fields.sign)
     {

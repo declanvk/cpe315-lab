@@ -9,27 +9,64 @@
 #include "unsigned_mult.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+
+void (*questions[7]) (void) = {
+    &question_1,
+    &question_2,
+    &question_3,
+    &question_4,
+    &question_5,
+    &question_6,
+    &question_7
+};
 
 int main(int argc, char const *argv[])
 {
-    question_1();
-    printf("\n");
+    int question_idx, limit = (sizeof(questions) / sizeof(questions[0]));
 
-    question_2();
-    printf("\n");
+    if (argc == 1)
+    {
+        for (question_idx = 0; question_idx < limit; question_idx++)
+        {
+            questions[question_idx]();
+            
+            if (question_idx != limit - 1)
+            {
+                printf("\n");
+            }
+        }
+    }
+    else if (argc == 2)
+    {
+        if ((question_idx = atoi(argv[1])) != 0)
+        {
+            question_idx -= 1;
 
-    question_3();
-    printf("\n");
+            if (0 <= question_idx && question_idx < limit)
+            {
+                questions[question_idx]();
+            }
+            else
+            {
+                fprintf(stderr, "n must be in range 1-7\n");
 
-    question_4();
-    printf("\n");
+                return EXIT_FAILURE;
+            }
+        }
+        else
+        {
+            fprintf(stderr, "usage: lab2 [n]\n");
 
-    question_5();
-    printf("\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "usage: lab2 [n]\n");
 
-    question_6();
-    printf("\n");
+        return EXIT_FAILURE;
+    }
 
-    question_7();
-    return 0;
+    return EXIT_SUCCESS;
 }
