@@ -6,6 +6,10 @@
 #include "common.h"
 #include "unpack_float.h"
 
+/*
+    Part 3 - Taking the int float struct, recreate the float is was
+    unpacked from.
+*/
 void question_3()
 {
     int arg_idx;
@@ -28,6 +32,13 @@ void question_3()
     printf("=========================\n");
 }
 
+/*
+    Zero the initial and result float value, then test the input
+    fraction's sign for the sign bit. If the fraction is not zero,
+    then shift off the sign bit and hidden bit, and decrement the 
+    exponent to account for the loss of the hidden bit. Set the 
+    fraction, and the exponent after accounting for th bias.
+*/
 float create_float(INTFLOAT_PTR extracted)
 {
     float_components components;
@@ -39,10 +50,10 @@ float create_float(INTFLOAT_PTR extracted)
     {
         extracted->fraction <<= 2;
         extracted->exponent--;
-    }
 
-    components.fields.frac = extracted->fraction;
-    components.fields.exp = extracted->exponent + 127;
+        components.fields.frac = extracted->fraction;
+        components.fields.exp = extracted->exponent + 127;
+    }
 
     return components.value;
 }

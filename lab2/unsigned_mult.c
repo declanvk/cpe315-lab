@@ -4,6 +4,9 @@
 
 #define LSB(x) (0x1 & x)
 
+/*
+    Part 1 - Manually multiply two unsigned integers
+*/
 void question_1()
 {
     unsigned int multiplicands[] = { 0x0001, 0x0001, 0x8000, 0x4000, 0x8000 };
@@ -20,6 +23,11 @@ void question_1()
     printf("=========================\n");
 }
 
+/*
+    For each 16 bits of the multiplicand and the multiplier, add the
+    multiplicand to the result only if the LSB of the multiplier is 1
+    and then shift the multiplier down. 
+*/
 unsigned int umultiply(unsigned int multiplicand, unsigned int multiplier)
 {
     int shift_idx;

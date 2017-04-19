@@ -28,6 +28,7 @@ void normalize(INTFLOAT_PTR x)
 {
     if (x->fraction == 0)
     {
+        x->exponent = 0;
         return;
     }
 

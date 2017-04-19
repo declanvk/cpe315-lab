@@ -6,10 +6,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+    Part 2 - Unpack IEEE 754 floating point single precision number into
+    int, float struct.
+*/
 void question_2()
 {
     int arg_idx;
-    int tests[] = { 0x40C80000, 0xC3000000, 0x3E000000, 0x3EAAAAAB };
+    int tests[] = { 0x40C80000, 0xC3000000, 0x3E000000, 0x3EAAAAAB, 0xC1080000 };
     INTFLOAT_PTR result = (INTFLOAT_PTR) malloc(sizeof(INTFLOAT));
     float input = 0;
 
@@ -29,6 +33,17 @@ void question_2()
     free(result);
 }
 
+/*
+    Checking if the input is zero for a special case,
+    set the union's float value to the value to decompose. Using
+    the union allows direct named access to specific bits in the 
+    float. Extract the exponent and remove the bias. Extract the 
+    fraction shifted over 2 places, and add 1 to the exponent to 
+    account for one of those shifts. The other place in the shift
+    is reserved for the sign bit. Then set the hidden bit, and clear
+    the sign bit. If the number turned out to be negative, set the
+    fraction to the the two's complement negation.
+*/
 void extract_float(INTFLOAT_PTR x, float f)
 {
     float_components components;
