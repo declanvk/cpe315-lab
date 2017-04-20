@@ -56,14 +56,14 @@ int main(int argc, char const *argv[])
         }
         else
         {
-            fprintf(stderr, "usage: lab2 [n]\n");
+            fprintf(stderr, "usage: %s [n]\n", argv[0]);
 
             return EXIT_FAILURE;
         }
     }
     else
     {
-        fprintf(stderr, "usage: lab2 [n]\n");
+        fprintf(stderr, "usage: %s [n]\n", argv[0]);
 
         return EXIT_FAILURE;
     }
