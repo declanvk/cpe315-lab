@@ -1,0 +1,1 @@
+# Question 2 - Create a function ‘bintohex’ to Convert a Binary number to a Hexadecimal null-terminated string
