@@ -3,7 +3,7 @@
 .data
 	pre_string: .asciiz "f("
 	mid_string: .asciiz ") = "
-	max_fibonacci_num: .word 10
+	max_fibonacci_num: .word 20
 .text
 main:	lw $t0, max_fibonacci_num # Init print limit
 	li $t1, 0 # init counter
