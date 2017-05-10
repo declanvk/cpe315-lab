@@ -11,7 +11,7 @@ main:
 	la $s2, a0_arguments # arg pointer
 	
 main_loop:
-	lw $a0, ($s2) # 
+	lw $a0, ($s2)
 	li $v0, 1
 	syscall
 	

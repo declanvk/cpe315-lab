@@ -39,24 +39,23 @@ exit:	li $v0, 10
 	syscall
 	
 fibonacci:
-	addiu $sp, $sp, -4 # push ra
-	sw $ra, 0($sp)
-	
-	addiu $sp, $sp, -4 # push s0
-	sw $s0, 0($sp)
-	
-	addiu $sp, $sp, -4 # push a0
-	sw $a0, 0($sp)
+	addiu $sp, $sp, -4 # clear space for frame pointer
+	sw $fp, 0($sp) # save frame pointer
+	move $fp, $sp # update frame pointer to new frame
+	addiu $sp, $sp, -12 # clear space for arguments and return address
+	sw $ra, -4($fp)
+	sw $a0, -8($fp)
+	sw $s0, -12($fp)
 	
 	beqz $a0, fibonacci_base_0 # test for first base case
 	beq $a0, 1, fibonacci_base_1 # test for second base case
 	
-	lw $a0, 0($sp) # f(n - 1) referenced from stack
+	lw $a0, -8($fp) # f(n - 1) referenced from frame
 	addi $a0, $a0, -1 
 	jal fibonacci # call fucntion recursively
 	move $s0, $v0 # load accumulator with inital value
 	
-	lw $a0, 0($sp) # f(n - 2) referenced from stack
+	lw $a0, -8($fp) # f(n - 2) referenced from frame
 	addi $a0, $a0, -2
 	jal fibonacci # call function recursively
 	add $s0, $s0, $v0 # add to accumulator
@@ -70,13 +69,10 @@ fibonacci_base_0:
 fibonacci_base_1:
 	li $v0, 1
 fibonacci_return:
-	lw $a0, 0($sp) # pop a0
-	addiu $sp, $sp, 4
-
-	lw $s0, 0($sp) # pop s0
-	addiu $sp, $sp, 4
+	lw $s0, -12($fp) # Restore s0, a0, return address, and frame pointer
+	lw $a0, -8($fp)
+	lw $ra, -4($fp)
+	lw $fp, 0($fp)
+	addi $sp $sp 16 # Remove extra space from stack
 	
-	lw $ra, 0($sp) # pop ra
-	addiu $sp, $sp, 4
-	
-	jr $ra # return from function
+	jr $ra
