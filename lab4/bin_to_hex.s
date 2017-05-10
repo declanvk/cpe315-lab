@@ -11,7 +11,7 @@ main:
 	la $s2, a0_arguments # arg pointer
 	
 main_loop:
-	lw $a0, ($s2)
+	lw $a0, ($s2) # 
 	li $v0, 1
 	syscall
 	
@@ -38,42 +38,53 @@ main_loop:
 exit:	li $v0, 10
 	syscall
 
+
+
+
 bintohex:
-	addiu $sp, $sp, -4 # push ra
-	sw $ra, 0($sp)
+	addiu $sp, $sp, -4 # clear space for frame pointer
+	sw $fp, 0($sp) # save frame pointer
+	move $fp, $sp # update frame pointer to new frame
+	addiu $sp, $sp, -12 # clear space for arguments and return
+	sw $ra, -4($fp)
+	sw $a0, -8($fp)
+	sw $a1, -12($fp)
 	
-	li $t0, 8 # loop counter
-	move $t1, $a0
+	li $t0, 8 # loop counter over number of bytes
+	move $t1, $a0 # move args into temporaries for mangling
 	move $t2, $a1
 	
 bintohex_main_loop:
-	and $t3, $t1, 0x0F
-	and $t4, $t4, $zero
+	and $t3, $t1, 0x0F # Get lowest 4 bits
+	and $t4, $t4, $zero # Clear register
 	
-	blt $t3, 0xA, bintohex_num_digit
-	j bintohex_alpha_digit
+	blt $t3, 0xA, bintohex_num_digit # Check if the digit is numeric
+	j bintohex_alpha_digit # Else is it alpha
 	
 bintohex_num_digit:
-	add $t4, $t4, 0x30
+	add $t4, $t4, 0x30 # Add numeric character baseline
 	j bintohex_main_loop_rest
 bintohex_alpha_digit:
-	add $t4, $t4, 0x41
-	sub $t3, $t3, 0x0A
+	add $t4, $t4, 0x41 # Add alpha character baseline
+	sub $t3, $t3, 0x0A # Subtract 10 to get correct offset
 
 bintohex_main_loop_rest:	
-	add $t4, $t4, $t3
-	sb $t4, ($t2)
+	add $t4, $t4, $t3 # Get total character code from sum
+	sb $t4, ($t2) # Store the byte
 	
-	srl $t1, $t1, 1
-	addiu $t2, $t2, 1
-	subiu $t0, $t0, 1
+	srl $t1, $t1, 4 # Shift down by 4 bits to examine those
+	addiu $t2, $t2, 1 # Inc storage buffer address
+	subiu $t0, $t0, 1 # Dec loop counter 
 	
-	bnez $t0, bintohex_main_loop
+	bnez $t0, bintohex_main_loop # GO back to top
 	
 bintohex_return:
 	sb $zero, 8($a1)
 
-	lw $ra, 0($sp)
-	addiu $sp, $sp, 4
+	lw $a1, -12($fp)
+	lw $a0, -8($fp)
+	lw $ra, -4($fp)
+	lw $fp, 0($fp)
+	addi $sp $sp 16
 	
 	jr $ra
