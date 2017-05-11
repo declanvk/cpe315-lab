@@ -1,27 +1,36 @@
 # Question 3 -  Create a recursive function that computes the Fibonacci value
 
 .data
-	pre_string: .asciiz "f("
-	mid_string: .asciiz ") = "
-	max_fibonacci_num: .word 20
+	fibonacci_pre_string: .asciiz "f("
+	fibonacci_mid_string: .asciiz ") = "
+	fibonacci_a0_arguments: .word 0, 1, 5, 10, 20
+	fibonacci_num_test: .word 5
 .text
-main:	lw $t0, max_fibonacci_num # Init print limit
-	li $t1, 0 # init counter
+fibonacci_main:
+	addiu $sp, $sp, -4 # clear space for frame pointer
+	sw $fp, 0($sp) # save frame pointer
+	move $fp, $sp # update frame pointer to new frame
+	addiu $sp, $sp, -8 # clear space for arguments and return address
+	sw $ra, -4($fp)
+	sw $a0, -8($fp)
 	
-main_loop:
+	lw $t0, fibonacci_num_test # Init print limit
+	la $t1, fibonacci_a0_arguments # init argument pointer
+	
+fibonacci_main_loop:
 	li $v0, 4
-	la $a0, pre_string
+	la $a0, fibonacci_pre_string
 	syscall # Print initial string
 	
 	li $v0, 1
-	move $a0, $t1
+	lw $a0, ($t1)
 	syscall # print argumemt to fib function
 	
 	li $v0, 4
-	la $a0, mid_string
+	la $a0, fibonacci_mid_string
 	syscall # Print middle string part
 	
-	move $a0, $t1 # set argument
+	lw $a0, ($t1) # set argument
 	jal fibonacci # call fibonacci function
 	
 	move $a0, $v0 # move returned value to print
@@ -32,10 +41,17 @@ main_loop:
 	li $v0, 11
 	syscall # print newline character
 	
-	addiu $t1, $t1, 1 # increment counter
-	ble $t1, $t0, main_loop # check if still in desirable range
+	addiu $t1, $t1, 4 # increment argument pointer
+	subiu $t0, $t0, 1 # decrement counter
+	bnez $t0, fibonacci_main_loop # check if still in desirable range
 	
-exit:	li $v0, 10
+fibonacci_main_exit:
+	lw $a0, -8($fp) # Restore s0, a0, return address, and frame pointer
+	lw $ra, -4($fp)
+	lw $fp, 0($fp)
+	addi $sp $sp 12 # Remove extra space from stack
+
+	li $v0, 10
 	syscall
 	
 fibonacci:
