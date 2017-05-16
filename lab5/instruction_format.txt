@@ -3,6 +3,6 @@
 2 - rt, rs, sign ext imm
 3 - rt, rs, imm
 4 - rt, imm
-5 - rs, imm, rt
+5 - rs, sign ext imm, rt
 6 - jump address
 7 - INVALID
