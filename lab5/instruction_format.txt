@@ -1,0 +1,8 @@
+0 - rs, rt, effective branch address
+1 - rs, effective branch address
+2 - rt, rs, sign ext imm
+3 - rt, rs, imm
+4 - rt, imm
+5 - rs, imm, rt
+6 - jump address
+7 - INVALID

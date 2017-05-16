@@ -16,7 +16,7 @@ $(MAIN): $(OBJ) $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $(OBJ)
 
 clean : 
-	rm -f *.o $(MAIN) *.zip
+	rm -f $(MAIN) *.zip
 
 package : $(MAIN) $(DEPS)
 	zip -u $(MAIN)_source.zip Makefile *.c *.h

@@ -1,0 +1,11 @@
+0 - rd, rs, rt
+1 - rd, rt, rs
+2 - rd, rt, shamt
+3 - rs, rd
+4 - rs, rt
+5 - rs, rt, rs, rt
+6 - rs
+7 - rt
+8 - rd
+9 - description
+10 - INVALID
