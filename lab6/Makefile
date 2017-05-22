@@ -18,5 +18,8 @@ $(MAIN): $(OBJ) $(DEPS)
 clean : 
 	rm -f $(MAIN) *.zip *.o
 
+debug : CFLAGS += -g
+debug : clean $(MAIN)
+
 package : $(MAIN) $(DEPS)
 	zip -u $(MAIN)_source.zip Makefile *.c *.h
