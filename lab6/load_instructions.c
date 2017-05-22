@@ -16,7 +16,10 @@ cpu_context *initialize_cpu(char *filename)
     MB_HDR mb_header;
     int num_read_bytes = 0;
 
-    context->memory = (MIPS_PTR) malloc(MEMORY_SIZE);
+    context->memory = (BYTE_PTR) malloc(MEMORY_SIZE);
+    context->pc = 0;
+    context->state = FETCH;
+    context->registers[31] = MEMORY_SIZE - 1;
 
     binary_file = open_file_check(filename, &mb_header);
     num_read_bytes = load_into_memory(binary_file, context->memory, &mb_header);
@@ -50,7 +53,7 @@ FILE *open_file_check(char *filename, MB_HDR_PTR header)
 
     /* read the header and verify it. */
     fread((void *) header, sizeof(MB_HDR), 1, binary_file);
-    if (!strcmp(header->signature, "~MB") == 0)
+    if (!(strcmp(header->signature, "~MB") == 0))
     {
         printf("\nThis isn't really a mips_asm binary file - quitting.\n");
         exit(EXIT_FAILURE);
@@ -59,7 +62,7 @@ FILE *open_file_check(char *filename, MB_HDR_PTR header)
     return binary_file;
 }
 
-int load_into_memory(FILE *binary_file, MIPS_PTR memory, MB_HDR_PTR header)
+int load_into_memory(FILE *binary_file, BYTE_PTR memory, MB_HDR_PTR header)
 {
     int mem_ptr;
     int input_byte;

@@ -5,18 +5,27 @@
 
 #include "common.h"
 
-typedef struct cpu_context_t cpu_context;
+typedef uint8_t BYTE, *BYTE_PTR; 
 
-struct cpu_context_t {
-    MIPS_PTR memory;
+typedef enum state_e {
+    FETCH,
+    DECODE,
+    EXECUTE,
+    MEM,
+    WRITEBACK,
+} cpu_state;
+
+typedef struct cpu_context_t {
+    BYTE_PTR memory;
     MIPS registers[32];
+    instruction ir;
     MIPS alu_out;
-    instruction ir_register;
-    MIPS memory_data_register;
-    MIPS load_a_register;
-    MIPS load_b_register;
-    uint32_t program_counter;
-};
+    MIPS memory_data;
+    MIPS load_a;
+    MIPS load_b;
+    uint32_t pc;
+    cpu_state state;
+} cpu_context;
 
 #define MEMORY_SIZE 10000000
 

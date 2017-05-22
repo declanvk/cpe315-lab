@@ -11,6 +11,6 @@
 cpu_context *initialize_cpu(char *filename);
 void free_cpu(cpu_context *context);
 FILE *open_file_check(char *filename, MB_HDR_PTR header);
-int load_into_memory(FILE *binary_file, MIPS_PTR memory, MB_HDR_PTR header);
+int load_into_memory(FILE *binary_file, BYTE_PTR memory, MB_HDR_PTR header);
 
 #endif
