@@ -25,7 +25,8 @@ cpu_context *initialize_cpu(char *filename)
     num_read_bytes = load_into_memory(binary_file, context->memory, &mb_header);
     if (num_read_bytes != mb_header.size)
     {
-        fprintf(stderr, "Could not read whole file, only %d bytes\n", num_read_bytes);
+        fprintf(stderr, "Could not read whole file, only %d of %d bytes\n",
+                num_read_bytes, mb_header.size);
         exit(EXIT_FAILURE);
     }
 
@@ -77,6 +78,11 @@ int load_into_memory(FILE *binary_file, BYTE_PTR memory, MB_HDR_PTR header)
         {
             mem_ptr += 4;  /* Increment byte pointer by size of instr */
         } else {
+            if (feof(binary_file))
+                fprintf(stderr, "Error reading file: unexpected end of file\n");
+            else if (ferror(binary_file)) {
+                perror("Error reading file");
+            }
             break;
         }
     } while (mem_ptr < header->size);

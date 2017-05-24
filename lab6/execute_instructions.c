@@ -11,7 +11,8 @@
 
 #define DEBUG_OUTPUT stderr
 
-int execute_instructions(char *program_name, cpu_context *context, program_stats *stats)
+int execute_instructions(char *program_name, cpu_context *context,
+                        program_stats *stats, FILE *output_stream)
 {
     int return_status = 0;
     run_mode mode = STEP;
@@ -23,7 +24,7 @@ int execute_instructions(char *program_name, cpu_context *context, program_stats
         case FETCH:
             if (mode == STEP)
             {
-                fprintf(stderr, "\n");
+                fprintf(stdout, "\n");
                 print_registers(stdout, context, true);
                 print_stats(stdout, program_name, stats, false);
 
@@ -50,7 +51,7 @@ int execute_instructions(char *program_name, cpu_context *context, program_stats
             }
             else if (IS_SYSCALL(context->ir))
             {
-                return_status = execute_syscall(context);
+                return_status = execute_syscall(context, output_stream);
             }
             else if (IS_R_TYPE(context->ir))
             {
@@ -272,7 +273,8 @@ int execute_immediate(cpu_context *context)
     //addiu
     case 0x09:
         fun_name = "addiu";
-        //TODO figure out what this means
+        context->alu_out = ((unsigned int) context->load_a) + \
+                            sign_extend(16, context->ir.i_type.immediate);
         assert(false);
         break;
     //andi
@@ -308,10 +310,19 @@ int execute_immediate(cpu_context *context)
     return 0;
 }
 
-int execute_syscall(cpu_context *context)
+int execute_syscall(cpu_context *context, FILE *output_stream)
 {
+    fprintf(stderr, "Exec syscall %5d, \n", context->registers[v0]);
     switch(context->registers[v0])
     {
+    //print_int
+    case 1:
+        fprintf(output_stream, "%d", context->registers[a0]);
+        break;
+    //print_string
+    case 4:
+        fprintf(output_stream, "%s", context->memory + context->registers[a0]);
+        break;
     //exit
     case 10:
         return 1;
@@ -376,19 +387,18 @@ int execute_load_store(cpu_context *context)
 int memory_load(cpu_context *context)
 {
     int n_bytes = 4;
-    unsigned int opcode = context->ir.r_type.opcode;
 
     fprintf(DEBUG_OUTPUT, "MEM load ");
-    if (opcode == 0x20 || opcode == 0x24)
+    if (context->ir.r_type.opcode == 0x20 || context->ir.r_type.opcode == 0x24)
     {
         n_bytes = 1;
     }
-    else if (opcode == 0x21 || opcode == 0x25)
+    else if (context->ir.r_type.opcode == 0x21 || context->ir.r_type.opcode == 0x25)
     {
         n_bytes = 2;
     }
 
-    if (opcode == 0x20 || opcode == 0x21)
+    if (context->ir.r_type.opcode == 0x20 || context->ir.r_type.opcode == 0x21)
     {
         context->memory_data = sign_extend(n_bytes * 8,
             read_n_bytes(context->memory, n_bytes, context->alu_out));
@@ -398,7 +408,7 @@ int memory_load(cpu_context *context)
         context->memory_data = read_n_bytes(context->memory, n_bytes, context->alu_out);
     }
 
-    if (opcode == 0x0F)
+    if (context->ir.r_type.opcode == 0x0F)
     {
         context->memory_data = context->ir.i_type.immediate << 16;
     }
@@ -410,8 +420,22 @@ int memory_load(cpu_context *context)
 
 int memory_store(cpu_context *context)
 {
-    //TODO
-    assert(false);
+    int n_bytes = 4;
+
+    fprintf(DEBUG_OUTPUT, "MEM store ");
+    if (context->ir.i_type.opcode == 0x28)
+    {
+        n_bytes = 1;
+    }
+    else if (context->ir.i_type.opcode == 0x2b)
+
+    {
+        n_bytes = 2;
+    }
+
+    write_n_bytes(context->memory, n_bytes, context->alu_out, context->load_b);
+
+    fprintf(DEBUG_OUTPUT, "%5x -> %04x\n", context->load_b, context->alu_out);
     return 0;
 }
 
@@ -480,4 +504,15 @@ uint32_t read_n_bytes(BYTE_PTR memory, int n_bytes, uint32_t address)
     }
 
     return result;
+}
+
+void write_n_bytes(BYTE_PTR memory, int n_bytes, uint32_t address, uint32_t value)
+{
+    int index;
+
+    for (index = 0; index < n_bytes; index++)
+    {
+        memory[address + index] = (0xFF & value);
+        value >>= 8;
+    }
 }
