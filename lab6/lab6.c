@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "common.hs"
+#include "common.h"
 #include "load_instructions.h"
 #include "execute_instructions.h"
 #include "summarise_context.h"
