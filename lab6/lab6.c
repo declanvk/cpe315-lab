@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     context = initialize_cpu(argv[1]);
 
     cycle_count = execute_instructions(argv[1], context, &stats);
-    print_registers(stdout, context, true);
+    print_registers(stdout, context, false);
     print_stats(stdout, argv[1], &stats, true);
 
     free_cpu(context);

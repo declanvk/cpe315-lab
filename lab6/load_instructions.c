@@ -18,7 +18,7 @@ cpu_context *initialize_cpu(char *filename)
 
     context->memory = (BYTE_PTR) calloc(1, MEMORY_SIZE);
     context->state = FETCH;
-    context->registers[31] = MEMORY_SIZE - 1;
+    context->registers[sp] = MEMORY_SIZE - 1;
 
     binary_file = open_file_check(filename, &mb_header);
 

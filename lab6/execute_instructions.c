@@ -9,6 +9,8 @@
 
 #include "summarise_context.h"
 
+#define DEBUG_OUTPUT stderr
+
 int execute_instructions(char *program_name, cpu_context *context, program_stats *stats)
 {
     int return_status = 0;
@@ -21,6 +23,7 @@ int execute_instructions(char *program_name, cpu_context *context, program_stats
         case FETCH:
             if (mode == STEP)
             {
+                fprintf(stderr, "\n");
                 print_registers(stdout, context, true);
                 print_stats(stdout, program_name, stats, false);
 
@@ -71,7 +74,12 @@ int execute_instructions(char *program_name, cpu_context *context, program_stats
             {
                 return_status = memory_load(context);
             }
-            stats->memory_ref_count++;
+
+            // not lui then inc
+            if (context->ir.i_type.opcode != 0x0F)
+            {
+                stats->memory_ref_count++;
+            }
             break;
         case WRITEBACK:
             if (IS_LOAD(context->ir) || IS_STORE(context->ir))
@@ -91,11 +99,11 @@ int execute_instructions(char *program_name, cpu_context *context, program_stats
 
     if (context->pc == MEMORY_SIZE)
     {
-        fprintf(stderr, "Fell off memory. Exiting.\n");
+        fprintf(DEBUG_OUTPUT, "Fell off memory. Exiting.\n");
     }
     else
     {
-        fprintf(stderr, "Exit called.\n");
+        fprintf(DEBUG_OUTPUT, "Exit called.\n");
     }
 
     return return_status;
@@ -133,7 +141,7 @@ cpu_state transition_state(cpu_context *context)
 int fetch(cpu_context *context)
 {
     context->ir.value = *((MIPS_PTR) (context->memory + context->pc));
-    fprintf(stderr, "\n%8x: %08x, ", context->pc, context->ir.value);
+    fprintf(DEBUG_OUTPUT, "\n%8x: %08x, ", context->pc, context->ir.value);
     context->pc += 4;
 
     return 0;
@@ -147,19 +155,19 @@ int decode(cpu_context *context)
     {
         context->alu_out = (context->pc & 0xF0000000) | \
                             ((context->ir.j_type.word_index << 2) & 0x0FFFFFFF);
-        fprintf(stderr, "%6s -> %8x, ", "JUMP", context->alu_out);
+        fprintf(DEBUG_OUTPUT, "%6s -> %8x, ", "JUMP", context->alu_out);
     }
     else
     {
         context->alu_out = context->pc + (sign_extend(16, context->ir.i_type.immediate) << 2);
-        fprintf(stderr, "%6s -> %8x, ", "BRANCH", context->alu_out);
+        fprintf(DEBUG_OUTPUT, "%6s -> %8x, ", "BRANCH", context->alu_out);
     }
     return 0;
 }
 
 int execute_r_type(cpu_context *context)
 {
-    fprintf(stderr, "Exec Rtype ");
+    fprintf(DEBUG_OUTPUT, "Exec Rinst ");
     char *fun_name = NULL;
     switch(context->ir.r_type.func)
     {
@@ -206,38 +214,32 @@ int execute_r_type(cpu_context *context)
     //sll
     case 0x00:
         fun_name = "sll";
-        //TODO implement shifting
-        assert(false);
+        context->alu_out = context->load_b << context->ir.r_type.shamt;
         break;
     //srl
     case 0x02:
         fun_name = "srl";
-        //TODO implement shifting
-        assert(false);
+        context->alu_out = ((unsigned int) context->load_b) >> context->ir.r_type.shamt;
         break;
     //sra
     case 0x03:
         fun_name = "sra";
-        //TODO implement shifting
-        assert(false);
+        context->alu_out = context->load_b >> context->ir.r_type.shamt;
         break;
     //sllv
     case 0x04:
         fun_name = "sllv";
-        //TODO implement shifting
-        assert(false);
+        context->alu_out = context->load_b << context->registers[context->ir.r_type.rs];
         break;
     //srlv
     case 0x06:
         fun_name = "srlv";
-        //TODO implement shifting
-        assert(false);
+        context->alu_out = ((unsigned int) context->load_b) >> context->registers[context->ir.r_type.rs];
         break;
     //srav
     case 0x07:
         fun_name = "srav";
-        //TODO implement shifting
-        assert(false);
+        context->alu_out = context->load_b >> context->registers[context->ir.r_type.rs];
         break;
     //sub
     case 0x22:
@@ -252,14 +254,14 @@ int execute_r_type(cpu_context *context)
     default:
         assert(false);
     }
-    fprintf(stderr, "%7s, ", fun_name);
+    fprintf(DEBUG_OUTPUT, "%7s, ", fun_name);
     return 0;
 }
 
 int execute_immediate(cpu_context *context)
 {
     char *fun_name = NULL;
-    fprintf(stderr, "Exec immed ");
+    fprintf(DEBUG_OUTPUT, "Exec immed ");
     switch(context->ir.i_type.opcode)
     {
     //addi
@@ -302,7 +304,7 @@ int execute_immediate(cpu_context *context)
     default:
         assert(false);
     }
-    fprintf(stderr, "%7s, ", fun_name);
+    fprintf(DEBUG_OUTPUT, "%7s, ", fun_name);
     return 0;
 }
 
@@ -322,25 +324,25 @@ int execute_syscall(cpu_context *context)
 int execute_branch(cpu_context *context)
 {
     char *followed = "";
-    fprintf(stderr, "Exec branch ");
+    fprintf(DEBUG_OUTPUT, "Exec branch ");
     if (context->ir.i_type.opcode == 0x04 && context->load_a == context->load_b)
     {
         followed = "was eq";
         context->pc = context->alu_out;
     }
-    else if (context->ir.i_type.opcode == 0x04 && context->load_a != context->load_b)
+    else if (context->ir.i_type.opcode == 0x05 && context->load_a != context->load_b)
     {
         followed = "was neq";
         context->pc = context->alu_out;
     }
-    fprintf(stderr, "%7s, ", followed);
+    fprintf(DEBUG_OUTPUT, "%7s, ", followed);
 
     return 0;
 }
 
 int execute_jump(cpu_context *context)
 {
-    fprintf(stderr, "Jumping to ");
+    fprintf(DEBUG_OUTPUT, "Jumping to ");
     if (context->ir.j_type.opcode == 0x02) //j
     {
         context->pc = context->alu_out;
@@ -359,14 +361,14 @@ int execute_jump(cpu_context *context)
         context->registers[ra] = context->pc;
         context->pc = context->registers[context->ir.r_type.rs];
     }
-    fprintf(stderr, "%07x, ", context->pc);
+    fprintf(DEBUG_OUTPUT, "%07x, ", context->pc);
 
     return 0;
 }
 
 int execute_load_store(cpu_context *context)
 {
-    fprintf(stderr, "%20s", "Loading or storing, ");
+    fprintf(DEBUG_OUTPUT, "%20s", "Loading or storing, ");
     context->alu_out = context->load_a + sign_extend(16, context->ir.i_type.immediate);
     return 0;
 }
@@ -376,7 +378,7 @@ int memory_load(cpu_context *context)
     int n_bytes = 4;
     unsigned int opcode = context->ir.r_type.opcode;
 
-    fprintf(stderr, "MEM load ");
+    fprintf(DEBUG_OUTPUT, "MEM load ");
     if (opcode == 0x20 || opcode == 0x24)
     {
         n_bytes = 1;
@@ -395,7 +397,13 @@ int memory_load(cpu_context *context)
     {
         context->memory_data = read_n_bytes(context->memory, n_bytes, context->alu_out);
     }
-    fprintf(stderr, "%8x %d, ", context->memory_data, n_bytes);
+
+    if (opcode == 0x0F)
+    {
+        context->memory_data = context->ir.i_type.immediate << 16;
+    }
+
+    fprintf(DEBUG_OUTPUT, "%8x %d, ", context->memory_data, n_bytes);
 
     return 0;
 }
@@ -409,18 +417,18 @@ int memory_store(cpu_context *context)
 
 int write_back_r_immediate(cpu_context *context)
 {
-    fprintf(stderr, "Writing back to ");
+    fprintf(DEBUG_OUTPUT, "                Writing reg ");
     if (IS_R_TYPE(context->ir))
     {
-        fprintf(stderr, "%2d with ", context->ir.r_type.rd);
+        fprintf(DEBUG_OUTPUT, "%2d = ", context->ir.r_type.rd);
         context->registers[context->ir.r_type.rd] = context->alu_out;
     }
     else
     {
-        fprintf(stderr, "%2d with ", context->ir.r_type.rt);
+        fprintf(DEBUG_OUTPUT, "%2d = ", context->ir.r_type.rt);
         context->registers[context->ir.r_type.rt] = context->alu_out;
     }
-    fprintf(stderr, "%08x", context->alu_out);
+    fprintf(DEBUG_OUTPUT, "%08x", context->alu_out);
     
     return 0;
 }
@@ -429,12 +437,12 @@ int write_back_load_store(cpu_context *context)
 {
     if (IS_LOAD(context->ir))
     {
-        fprintf(stderr, "Writing %2d: %8x", context->ir.i_type.rt, context->memory_data);
+        fprintf(DEBUG_OUTPUT, "Writing %2d: %8x", context->ir.i_type.rt, context->memory_data);
         context->registers[context->ir.i_type.rt] = context->memory_data;
     }
     else
     {
-        fprintf(stderr, "%20s", "");
+        fprintf(DEBUG_OUTPUT, "%20s", "");
     }
     return 0;
 }
