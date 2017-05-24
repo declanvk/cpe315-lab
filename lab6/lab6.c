@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "common.hs"
 #include "load_instructions.h"
 #include "execute_instructions.h"
 #include "summarise_context.h"
@@ -29,9 +30,18 @@ int main(int argc, char *argv[])
         output_stream = fopen(argv[2], "w");
     }
 
+    stats.clock_count = 0;
+    stats.instruction_count = 0;
+    stats.memory_ref_count = 0;
+
     cycle_count = execute_instructions(argv[1], context, &stats, output_stream);
     print_registers(stdout, context, false);
     print_stats(stdout, argv[1], &stats, true);
+
+    if (argc == 3)
+    {
+        fclose(output_stream);
+    }
 
     free_cpu(context);
     return 0;
