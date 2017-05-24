@@ -16,18 +16,20 @@ cpu_context *initialize_cpu(char *filename)
     MB_HDR mb_header;
     int num_read_bytes = 0;
 
-    context->memory = (BYTE_PTR) malloc(MEMORY_SIZE);
-    context->pc = 0;
+    context->memory = (BYTE_PTR) calloc(1, MEMORY_SIZE);
     context->state = FETCH;
     context->registers[31] = MEMORY_SIZE - 1;
 
     binary_file = open_file_check(filename, &mb_header);
+
     num_read_bytes = load_into_memory(binary_file, context->memory, &mb_header);
     if (num_read_bytes != mb_header.size)
     {
         fprintf(stderr, "Could not read whole file, only %d bytes\n", num_read_bytes);
         exit(EXIT_FAILURE);
     }
+
+    context->pc = mb_header.entry;
 
     fclose(binary_file);
 
@@ -70,7 +72,7 @@ int load_into_memory(FILE *binary_file, BYTE_PTR memory, MB_HDR_PTR header)
     mem_ptr = 0; /* This is the memory pointer, a byte offset */
     do {
         /* note div/4 to make word index */
-        input_byte = fread((void *) &memory[mem_ptr/4], 4, 1, binary_file); 
+        input_byte = fread((void *) (memory + mem_ptr), 4, 1, binary_file); 
         if (input_byte)
         {
             mem_ptr += 4;  /* Increment byte pointer by size of instr */

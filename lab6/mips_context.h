@@ -21,8 +21,8 @@ typedef struct cpu_context_t {
     instruction ir;
     MIPS alu_out;
     MIPS memory_data;
-    MIPS load_a;
-    MIPS load_b;
+    int32_t load_a;
+    int32_t load_b;
     uint32_t pc;
     cpu_state state;
 } cpu_context;
