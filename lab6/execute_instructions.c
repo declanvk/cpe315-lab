@@ -102,10 +102,6 @@ int execute_instructions(char *program_name, cpu_context *context,
     {
         fprintf(DEBUG_OUTPUT, "Fell off memory. Exiting.\n");
     }
-    else
-    {
-        fprintf(DEBUG_OUTPUT, "Exit called.\n");
-    }
 
     return return_status;
 }
@@ -335,18 +331,18 @@ int execute_syscall(cpu_context *context, FILE *output_stream)
 int execute_branch(cpu_context *context)
 {
     char *followed = "";
-    fprintf(DEBUG_OUTPUT, "Exec branch ");
+    fprintf(DEBUG_OUTPUT, "Exec branch is ");
     if (context->ir.i_type.opcode == 0x04 && context->load_a == context->load_b)
     {
-        followed = "was eq";
+        followed = "eq";
         context->pc = context->alu_out;
     }
     else if (context->ir.i_type.opcode == 0x05 && context->load_a != context->load_b)
     {
-        followed = "was neq";
+        followed = "neq";
         context->pc = context->alu_out;
     }
-    fprintf(DEBUG_OUTPUT, "%7s, ", followed);
+    fprintf(DEBUG_OUTPUT, "%3s, ", followed);
 
     return 0;
 }

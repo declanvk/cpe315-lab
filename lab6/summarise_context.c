@@ -23,7 +23,7 @@ void print_registers(FILE *output_stream, cpu_context *context, bool hex_output)
     int group_offset = 0;
     int group_idx = 0;
 
-    char *register_format = hex_output ? "%08x  ": "%08d  ";
+    char *register_format = hex_output ? "%08x  ": "%8d  ";
     
     for (group_idx = 0; group_idx < 7; group_idx++)
     {
