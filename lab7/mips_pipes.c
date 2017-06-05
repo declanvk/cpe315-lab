@@ -64,12 +64,6 @@ int decode(cpu_context *context, program_stats *stats)
 
     if (context->if_id.skip_cycle)
     {
-        if (!(!context->registers_valid[context->if_id.ir.r_type.rs] || 
-            !context->registers_valid[context->if_id.ir.r_type.rt]))
-        {
-            fprintf(DEBUG_OUTPUT, "%7s(nothing)", "");
-        }
-
         context->if_id.skip_cycle = false;
         context->id_ex.skip_cycle = true;
         return 0;
@@ -114,6 +108,8 @@ int decode(cpu_context *context, program_stats *stats)
         {
             fprintf(stderr, "Jump to %08x", context->registers[context->if_id.ir.r_type.rs]);
         }
+
+        stats->completed_instruction_count++;
     }
     else
     {
@@ -190,6 +186,7 @@ int execute(cpu_context *context, program_stats *stats, FILE *output_stream)
     else if (IS_BRANCH(context->id_ex.opcode, context->id_ex.func))
     {
         return_status = execute_branch(context, stats);
+        stats->completed_instruction_count++;
     }
     else if (IS_IMMEDIATE(context->id_ex.opcode, context->id_ex.func))
     {
@@ -292,6 +289,7 @@ int write_back(cpu_context *context, program_stats *stats)
     }
 
     stats->writeback_count++;
+    stats->completed_instruction_count++;
     context->mem_wb.writeback_busy = false;
     return return_status;
 }
@@ -553,7 +551,7 @@ int memory_store(cpu_context *context)
 
     write_n_bytes(context->memory, n_bytes, context->ex_mem.alu_out, context->id_ex.load_b);
 
-    fprintf(DEBUG_OUTPUT, "%5x -> %04x\n", context->id_ex.load_b, context->ex_mem.alu_out);
+    fprintf(DEBUG_OUTPUT, "%5x -> %04x", context->id_ex.load_b, context->ex_mem.alu_out);
     return 0;
 }
 
