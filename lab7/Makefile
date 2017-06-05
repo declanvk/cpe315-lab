@@ -3,9 +3,9 @@
 
 CC = gcc
 CFLAGS = -Wall -std=c99 -pedantic
-MAIN = lab6
+MAIN = lab7
 DEPS = mips_asm_header.h mips_context.h common.h
-OBJ = load_instructions.o execute_instructions.o summarise_context.o lab6.o
+OBJ = load_instructions.o execute_instructions.o summarise_context.o cpu_utils.o lab7.o mips_pipes.o
 
 all : $(MAIN)
 

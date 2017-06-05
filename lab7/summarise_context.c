@@ -43,12 +43,19 @@ void print_registers(FILE *output_stream, cpu_context *context, bool hex_output)
     }
 }
 
-char *stat_end_format = "%s totalled %d cycles, %d instructions, %d memory references.\n";
-char *stat_mid_format = "%s executed %d cycles, %d instructions, %d memory references.\n";
+char *stat_end_format = "%s totalled %d cycles, %d instructions, %d memory references.\nFlushes: %d, Fetches: %d, Decodes: %d, Executes: %d, Memories: %d, Writebacks: %d\n";
+char *stat_mid_format = "%s executed %d cycles, %d instructions, %d memory references.\nFlushes: %d, Fetches: %d, Decodes: %d, Executes: %d, Memories: %d, Writebacks: %d\n";
 
 void print_stats(FILE *output_stream, char *program_name, program_stats *stats, bool end)
 {
-    fprintf(output_stream, end ? stat_end_format : stat_mid_format,
-        program_name,
-        stats->clock_count, stats->instruction_count, stats->memory_ref_count);
+    fprintf(output_stream, end ? stat_end_format : stat_mid_format, program_name,
+        stats->clock_count, stats->completed_instruction_count, stats->memory_ref_count,
+        stats->flush_count, stats->fetch_count, stats->decode_count, stats->execute_count,
+        stats->memory_cycle_count, stats->writeback_count);
+    return;
+}
+
+void print_clock_header(FILE *output_stream)
+{
+    fprintf(output_stream, "|%-23s|%-23s|%-23s|%-23s|%s\n", "Fetch", "Decode", "Execute", "Memory", "Write Back");
 }

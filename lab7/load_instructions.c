@@ -15,9 +15,9 @@ cpu_context *initialize_cpu(char *filename)
     FILE *binary_file = NULL;
     MB_HDR mb_header;
     int num_read_bytes = 0;
+    int reg_index;
 
     context->memory = (BYTE_PTR) calloc(1, MEMORY_SIZE);
-    context->state = FETCH;
     context->registers[sp] = MEMORY_SIZE - 1;
 
     binary_file = open_file_check(filename, &mb_header);
@@ -31,6 +31,21 @@ cpu_context *initialize_cpu(char *filename)
     }
 
     context->pc = mb_header.entry;
+
+    context->if_id.decode_busy = false;
+    context->id_ex.execute_busy = false;
+    context->ex_mem.memory_busy = false;
+    context->mem_wb.writeback_busy = false;
+
+    context->if_id.skip_cycle = true;
+    context->id_ex.skip_cycle = true;
+    context->ex_mem.skip_cycle = true;
+    context->mem_wb.skip_cycle = true;
+
+    for (reg_index = 0; reg_index <= ra; reg_index++)
+    {
+        context->registers_valid[reg_index] = true;
+    }
 
     fclose(binary_file);
 
